@@ -146,15 +146,15 @@ function ResultsPage() {
         {/* Overall metrics */}
         <section className="mt-10 grid gap-4 sm:grid-cols-3">
           <MetricCard
-            label="Overall Architecture"
+            label="Overall Structural Integrity"
             value={result.overall}
-            hint="Weighted mean across all four constructs"
+            hint="Mean of the three core load-bearing constructs"
             accent="var(--primary)"
           />
           <MetricCard
-            label="Structural Balance"
-            value={result.balance}
-            hint="How evenly the load is distributed"
+            label="Structural Coherence"
+            value={result.coherence}
+            hint="How evenly the core three carry the load"
             accent="var(--accent)"
           />
           <MetricCard
@@ -275,25 +275,64 @@ function ResultsPage() {
           </div>
         </section>
 
-        {/* Balance analysis */}
+        {/* Coherence analysis */}
         <section className="mt-8">
           <Card className="p-6 shadow-[var(--shadow-card)] sm:p-8">
             <div className="grid grid-cols-[minmax(0,1fr)_auto] items-start gap-4">
               <div className="min-w-0">
-                <h2 className="text-lg font-semibold tracking-tight text-foreground">Structural balance</h2>
+                <h2 className="text-lg font-semibold tracking-tight text-foreground">Structural coherence</h2>
                 <p className="mt-2 max-w-2xl text-sm leading-relaxed text-muted-foreground">
-                  {balanceCopy(result.balance)}
+                  {coherenceCopy(result.coherence)}
                 </p>
               </div>
               <div className="shrink-0 text-right">
                 <div className="text-4xl font-semibold tabular-nums tracking-tight" style={{ color: "var(--accent)" }}>
-                  {result.balance}
+                  {result.coherence}
                 </div>
-                <div className="text-[10px] uppercase tracking-wider text-muted-foreground">Balance</div>
+                <div className="text-[10px] uppercase tracking-wider text-muted-foreground">Coherence</div>
               </div>
             </div>
             <div className="mt-5">
-              <Progress value={result.balance} className="h-1.5" />
+              <Progress value={result.coherence} className="h-1.5" />
+            </div>
+          </Card>
+        </section>
+
+        {/* Growth Readiness modifier */}
+        <section className="mt-8">
+          <Card
+            className="p-6 shadow-[var(--shadow-card)] sm:p-8"
+            style={{
+              background: "color-mix(in oklab, var(--accent) 4%, var(--card))",
+              borderColor: "color-mix(in oklab, var(--accent) 20%, var(--border))",
+            }}
+          >
+            <div className="grid grid-cols-[minmax(0,1fr)_auto] items-start gap-4">
+              <div className="min-w-0">
+                <p className="text-xs font-semibold uppercase tracking-[0.14em] text-muted-foreground">
+                  Developmental modifier
+                </p>
+                <h2 className="mt-1 text-lg font-semibold tracking-tight text-foreground">
+                  Growth Readiness · {result.growthModifier.tier}
+                </h2>
+                <p className="mt-2 max-w-2xl text-sm leading-relaxed text-muted-foreground">
+                  {result.growthModifier.recommendation}
+                </p>
+                <div className="mt-4 grid grid-cols-2 gap-4 sm:max-w-md">
+                  <div>
+                    <p className="text-[10px] uppercase tracking-wider text-muted-foreground">Growth Readiness</p>
+                    <p className="text-2xl font-semibold tabular-nums" style={{ color: "var(--accent)" }}>
+                      {result.growthScore.raw}<span className="text-sm text-muted-foreground"> / 100</span>
+                    </p>
+                  </div>
+                  <div>
+                    <p className="text-[10px] uppercase tracking-wider text-muted-foreground">Improvement potential</p>
+                    <p className="text-2xl font-semibold tabular-nums" style={{ color: "var(--gold)" }}>
+                      {result.improvementPotential}<span className="text-sm text-muted-foreground"> / 100</span>
+                    </p>
+                  </div>
+                </div>
+              </div>
             </div>
           </Card>
         </section>
@@ -410,13 +449,13 @@ function tierLabel(v: number) {
   return "Foundational";
 }
 
-function balanceCopy(v: number) {
+function coherenceCopy(v: number) {
   if (v >= 85)
-    return "Your architecture is exceptionally balanced. No single construct is bearing the weight of the others. This is a sign of durable, integrated leadership.";
+    return "Your core architecture is exceptionally coherent. Purpose, resilience, and stewardship carry the load together — a signature of durable, integrated leadership.";
   if (v >= 70)
-    return "Your architecture is well-balanced. Minor asymmetries exist but the structure holds under load.";
+    return "Your core architecture is coherent. Minor asymmetries exist across the three load-bearing constructs but the structure holds under load.";
   if (v >= 55)
-    return "There is meaningful asymmetry in your architecture. One or two constructs are quietly compensating for the others. Left unaddressed, this becomes brittle at scale.";
+    return "There is meaningful asymmetry across the core three. One construct is quietly compensating for the others. Left unaddressed, this becomes brittle at scale.";
   return "Your architecture is significantly uneven. A dominant construct is carrying disproportionate load — impressive in the short run, unsustainable across cycles.";
 }
 
@@ -439,9 +478,11 @@ function buildReport(r: ScoreResult) {
     soft,
     "OVERALL METRICS",
     soft,
-    `  Overall Architecture : ${r.overall} / 100`,
-    `  Structural Balance   : ${r.balance} / 100`,
-    `  Confidence Index     : ${r.confidence} / 100`,
+    `  Overall Structural Integrity : ${r.overall} / 100   (core three)`,
+    `  Structural Coherence         : ${r.coherence} / 100`,
+    `  Confidence Index             : ${r.confidence} / 100`,
+    `  Growth Readiness (modifier)  : ${r.growthScore.raw} / 100  [${r.growthModifier.tier}]`,
+    `  Improvement Potential        : ${r.improvementPotential} / 100`,
     "",
     soft,
     "CONSTRUCT SCORES",
@@ -461,9 +502,14 @@ function buildReport(r: ScoreResult) {
     ...r.risks.map((s) => `  • ${s.name} — ${s.raw}/100 (${tierLabel(s.raw)})`),
     "",
     soft,
-    "STRUCTURAL BALANCE",
+    "STRUCTURAL COHERENCE",
     soft,
-    balanceCopy(r.balance),
+    coherenceCopy(r.coherence),
+    "",
+    soft,
+    "GROWTH READINESS MODIFIER",
+    soft,
+    r.growthModifier.recommendation,
     "",
     soft,
     "WHERE TO FOCUS NEXT",
