@@ -77,14 +77,22 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "Lovable App" },
-      { name: "description", content: "Lovable Generated Project" },
-      { name: "author", content: "Lovable" },
-      { property: "og:title", content: "Lovable App" },
-      { property: "og:description", content: "Lovable Generated Project" },
+      { title: "Inner Architecture Diagnostic™ | FutureProofCEOs" },
+      {
+        name: "description",
+        content:
+          "A research-grade diagnostic for CEOs and organizational leaders. Measure your Purpose, Resilience, Stewardship, and Growth architecture in 12 minutes.",
+      },
+      { name: "author", content: "FutureProofCEOs" },
+      { property: "og:title", content: "Inner Architecture Diagnostic™" },
+      {
+        property: "og:description",
+        content:
+          "Measure the four inner architectures behind durable leadership: Purpose, Resilience, Stewardship, Growth.",
+      },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
-      { name: "twitter:site", content: "@Lovable" },
+      { name: "twitter:site", content: "@FutureProofCEOs" },
     ],
     links: [
       {
