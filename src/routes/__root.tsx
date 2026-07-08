@@ -84,15 +84,19 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
           "A research-grade diagnostic for CEOs and organizational leaders. Measure your Purpose, Resilience, Stewardship, and Growth architecture in 12 minutes.",
       },
       { name: "author", content: "FutureProofCEOs" },
-      { property: "og:title", content: "Inner Architecture Diagnostic™" },
+      { property: "og:title", content: "Inner Architecture Diagnostic™ | FutureProofCEOs" },
       {
         property: "og:description",
         content:
-          "Measure the four inner architectures behind durable leadership: Purpose, Resilience, Stewardship, Growth.",
+          "A research-grade diagnostic for CEOs and organizational leaders. Measure your Purpose, Resilience, Stewardship, and Growth architecture in 12 minutes.",
       },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
       { name: "twitter:site", content: "@FutureProofCEOs" },
+      { name: "twitter:title", content: "Inner Architecture Diagnostic™ | FutureProofCEOs" },
+      { name: "twitter:description", content: "A research-grade diagnostic for CEOs and organizational leaders. Measure your Purpose, Resilience, Stewardship, and Growth architecture in 12 minutes." },
+      { property: "og:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/ae179b6d-4813-48d7-a655-e691c81ed10e/id-preview-028f3750--35d5be9f-a96d-43af-8dc5-9e966d756dd1.lovable.app-1783530859051.png" },
+      { name: "twitter:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/ae179b6d-4813-48d7-a655-e691c81ed10e/id-preview-028f3750--35d5be9f-a96d-43af-8dc5-9e966d756dd1.lovable.app-1783530859051.png" },
     ],
     links: [
       {
