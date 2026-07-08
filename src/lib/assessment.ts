@@ -132,12 +132,16 @@ export interface ConstructScore {
 
 export interface ScoreResult {
   scores: ConstructScore[];
+  coreScores: ConstructScore[];
+  growthScore: ConstructScore;
   overall: number;
   confidence: number; // 0–100
-  balance: number;    // 0–100 (100 = perfectly balanced)
+  coherence: number;  // 0–100 (100 = perfectly coherent across core three)
+  improvementPotential: number; // 0–100 — derived from Growth Readiness + headroom
   profile: Profile;
   strengths: ConstructScore[];
   risks: ConstructScore[];
+  growthModifier: GrowthModifier;
 }
 
 export interface Profile {
@@ -145,6 +149,12 @@ export interface Profile {
   archetype: string;
   summary: string;
   guidance: string;
+}
+
+export interface GrowthModifier {
+  tier: "High" | "Moderate" | "Emerging";
+  label: string;
+  recommendation: string;
 }
 
 function normalize(value: number, reverse: boolean | undefined) {
@@ -171,40 +181,86 @@ export function scoreAssessment(answers: Answers): ScoreResult {
 
   const totalAnswered = scores.reduce((a, s) => a + s.answered, 0);
   const totalItems = scores.reduce((a, s) => a + s.total, 0);
-  const overall = Math.round(scores.reduce((a, s) => a + s.raw, 0) / scores.length);
 
-  // Balance: 100 - normalized standard deviation across constructs
+  // Overall Structural Integrity: mean of the three core load-bearing constructs.
+  // Growth Readiness is intentionally excluded — it modifies development, not structure.
+  const coreScores = scores.filter((s) => s.key !== "growth");
+  const growthScore = scores.find((s) => s.key === "growth")!;
+  const overall = Math.round(
+    coreScores.reduce((a, s) => a + s.raw, 0) / coreScores.length,
+  );
+
+  // Structural Coherence: 100 - normalized standard deviation across the core three.
   const mean = overall;
   const variance =
-    scores.reduce((a, s) => a + Math.pow(s.raw - mean, 2), 0) / scores.length;
+    coreScores.reduce((a, s) => a + Math.pow(s.raw - mean, 2), 0) / coreScores.length;
   const sd = Math.sqrt(variance);
-  const balance = Math.max(0, Math.round(100 - sd * 2.2));
+  const coherence = Math.max(0, Math.round(100 - sd * 2.2));
 
   const confidence = Math.round((totalAnswered / totalItems) * 100);
 
-  const sorted = [...scores].sort((a, b) => b.raw - a.raw);
+  const sorted = [...coreScores].sort((a, b) => b.raw - a.raw);
   const strengths = sorted.slice(0, 2);
-  const risks = sorted.slice(-2).reverse();
+  const risks = [...sorted].reverse().slice(0, 2);
 
-  const profile = deriveProfile(scores, balance);
+  const growthModifier = deriveGrowthModifier(growthScore.raw);
+  // Improvement potential = headroom on the core × growth readiness.
+  const headroom = 100 - overall;
+  const improvementPotential = Math.round((headroom * growthScore.raw) / 100);
 
-  return { scores, overall, confidence, balance, profile, strengths, risks };
+  const profile = deriveProfile(coreScores, coherence, growthScore.raw);
+
+  return {
+    scores,
+    coreScores,
+    growthScore,
+    overall,
+    confidence,
+    coherence,
+    improvementPotential,
+    profile,
+    strengths,
+    risks,
+    growthModifier,
+  };
 }
 
-function deriveProfile(scores: ConstructScore[], balance: number): Profile {
-  const map = Object.fromEntries(scores.map((s) => [s.key, s.raw])) as Record<ConstructKey, number>;
-  const top = [...scores].sort((a, b) => b.raw - a.raw)[0];
+function deriveGrowthModifier(growth: number): GrowthModifier {
+  if (growth >= 70)
+    return {
+      tier: "High",
+      label: "High developmental velocity",
+      recommendation:
+        "Growth Readiness is high. Improvements to the core three will compound quickly — pursue an ambitious 90-day plan.",
+    };
+  if (growth >= 50)
+    return {
+      tier: "Moderate",
+      label: "Moderate developmental velocity",
+      recommendation:
+        "Growth Readiness is moderate. Pair each core-construct intervention with one deliberate learning practice to accelerate uptake.",
+    };
+  return {
+    tier: "Emerging",
+    label: "Emerging developmental velocity",
+    recommendation:
+      "Growth Readiness is the rate-limiter. Before restructuring the core, invest in feedback loops, mentorship, and reflection — otherwise gains will not stick.",
+  };
+}
 
-  const highBalance = balance >= 75;
-  const overallHigh = scores.every((s) => s.raw >= 70);
-  const overallLow = scores.every((s) => s.raw < 55);
+function deriveProfile(coreScores: ConstructScore[], coherence: number, _growth: number): Profile {
+  const top = [...coreScores].sort((a, b) => b.raw - a.raw)[0];
 
-  if (overallHigh && highBalance) {
+  const highCoherence = coherence >= 75;
+  const overallHigh = coreScores.every((s) => s.raw >= 70);
+  const overallLow = coreScores.every((s) => s.raw < 55);
+
+  if (overallHigh && highCoherence) {
     return {
       title: "The Integrated Steward",
       archetype: "Rare — top decile inner architecture",
       summary:
-        "Your inner architecture is coherent across all four constructs. You lead from a stable center: clear purpose, sustainable resilience, disciplined stewardship, and an appetite for growth.",
+        "Your inner architecture is coherent across the three load-bearing constructs. You lead from a stable center: clear purpose, sustainable resilience, and disciplined stewardship.",
       guidance:
         "Your work now is to compound. Codify what you know so it survives you, and mentor the leaders who will inherit the systems you have built.",
     };
@@ -220,14 +276,14 @@ function deriveProfile(scores: ConstructScore[], balance: number): Profile {
     };
   }
 
-  const byKey: Record<ConstructKey, Profile> = {
+  const byKey: Record<Exclude<ConstructKey, "growth">, Profile> = {
     purpose: {
       title: "The Anchored Founder",
       archetype: "Purpose-led leader",
       summary:
         "Your clarity of purpose is the load-bearing wall of your leadership. Others feel it. Decisions flow from conviction rather than circumstance.",
       guidance:
-        "Guard against purpose becoming rigidity. Invest in resilience and growth so your clarity is not brittle under pressure.",
+        "Guard against purpose becoming rigidity. Invest in resilience so your clarity is not brittle under pressure.",
     },
     resilience: {
       title: "The Composed Operator",
@@ -245,17 +301,9 @@ function deriveProfile(scores: ConstructScore[], balance: number): Profile {
       guidance:
         "Stewardship can quietly slide into over-control. Practice releasing what growth-oriented leaders around you can now carry.",
     },
-    growth: {
-      title: "The Adaptive Executive",
-      archetype: "Growth-led leader",
-      summary:
-        "You learn faster than your context changes. That velocity is the reason you keep outgrowing your own job description.",
-      guidance:
-        "Growth without stewardship becomes churn. Build the systems and successors that let your learning compound in the organization.",
-    },
   };
 
-  return byKey[top.key];
+  return byKey[top.key as Exclude<ConstructKey, "growth">];
 }
 
 export const STORAGE_KEY = "iad_answers_v1";
