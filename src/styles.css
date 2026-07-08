@@ -151,4 +151,17 @@
     background-color: var(--color-background);
     color: var(--color-foreground);
   }
+
+  html {
+    scroll-behavior: smooth;
+  }
+}
+
+@utility card-hover {
+  transition: transform 300ms ease, box-shadow 300ms ease, border-color 300ms ease;
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 12px 32px -16px oklch(0.33 0.13 258 / 0.18);
+    border-color: color-mix(in oklab, var(--primary) 22%, var(--border));
+  }
 }
