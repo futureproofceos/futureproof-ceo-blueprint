@@ -143,6 +143,7 @@ export interface ScoreResult {
   risks: ConstructScore[];
   growthModifier: GrowthModifier;
   primaryRisk: PrimaryRisk;
+  interpretation: ExecutiveInterpretation;
 }
 
 export interface Profile {
@@ -167,6 +168,23 @@ export interface PrimaryRisk {
   description: string;
   recommendation: string;
   detected: boolean;
+}
+
+export interface ExecutiveInterpretation {
+  executiveSummary: string;
+  primaryStrength: {
+    construct: string;
+    rationale: string;
+    behaviour: string;
+  };
+  developmentPriority: {
+    construct: string;
+    rationale: string;
+  };
+  pressureResponse: string;
+  growthPotential: string;
+  recommendedNextStep: string;
+  reflectionQuestions: string[];
 }
 
 function normalize(value: number, reverse: boolean | undefined) {
