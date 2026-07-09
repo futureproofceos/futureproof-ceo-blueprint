@@ -28,7 +28,7 @@ import {
   type RiskSeverity,
   type ScoreResult,
 } from "@/lib/assessment";
-import { ArrowLeft, Download, RotateCcw, TrendingUp, AlertTriangle, Sparkles, ShieldAlert } from "lucide-react";
+import { ArrowLeft, Download, RotateCcw, TrendingUp, AlertTriangle, Sparkles, ShieldAlert, FileText } from "lucide-react";
 
 export const Route = createFileRoute("/results")({
   head: () => ({
@@ -410,6 +410,75 @@ function ResultsPage() {
           </Card>
         </section>
 
+        {/* Executive Interpretation */}
+        <section className="mt-8">
+          <Card className="p-6 shadow-[var(--shadow-card)] sm:p-8">
+            <div className="flex items-center gap-2">
+              <FileText className="h-4 w-4 text-primary" />
+              <h3 className="text-xs font-semibold uppercase tracking-[0.14em] text-primary">
+                Executive Interpretation
+              </h3>
+            </div>
+
+            <div className="mt-6 space-y-8">
+              <InterpretationBlock label="Executive Summary">
+                <p className="text-sm leading-relaxed text-foreground">
+                  {result.interpretation.executiveSummary}
+                </p>
+              </InterpretationBlock>
+
+              <InterpretationBlock label="Primary Strength">
+                <p className="text-base font-semibold tracking-tight text-foreground">
+                  {result.interpretation.primaryStrength.construct}
+                </p>
+                <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
+                  {result.interpretation.primaryStrength.rationale}
+                </p>
+                <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
+                  {result.interpretation.primaryStrength.behaviour}
+                </p>
+              </InterpretationBlock>
+
+              <InterpretationBlock label="Development Priority">
+                <p className="text-base font-semibold tracking-tight text-foreground">
+                  {result.interpretation.developmentPriority.construct}
+                </p>
+                <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
+                  {result.interpretation.developmentPriority.rationale}
+                </p>
+              </InterpretationBlock>
+
+              <InterpretationBlock label="Pressure Response">
+                <p className="text-sm leading-relaxed text-muted-foreground">
+                  {result.interpretation.pressureResponse}
+                </p>
+              </InterpretationBlock>
+
+              <InterpretationBlock label="Growth Potential">
+                <p className="text-sm leading-relaxed text-muted-foreground">
+                  {result.interpretation.growthPotential}
+                </p>
+              </InterpretationBlock>
+
+              <InterpretationBlock label="Recommended Next Step">
+                <p className="text-sm leading-relaxed text-foreground">
+                  {result.interpretation.recommendedNextStep}
+                </p>
+              </InterpretationBlock>
+
+              <InterpretationBlock label="Reflection Questions">
+                <ol className="mt-1 list-decimal space-y-3 pl-5">
+                  {result.interpretation.reflectionQuestions.map((q, i) => (
+                    <li key={i} className="text-sm leading-relaxed text-muted-foreground">
+                      {q}
+                    </li>
+                  ))}
+                </ol>
+              </InterpretationBlock>
+            </div>
+          </Card>
+        </section>
+
         <section className="mt-10 flex flex-wrap justify-center gap-3">
           <Button variant="outline" onClick={reset}>
             <RotateCcw className="mr-1 h-4 w-4" /> Retake diagnostic
@@ -512,6 +581,23 @@ function PrimaryRiskCard({ risk }: { risk: PrimaryRisk }) {
   );
 }
 
+function InterpretationBlock({
+  label,
+  children,
+}: {
+  label: string;
+  children: React.ReactNode;
+}) {
+  return (
+    <div className="border-t border-border/60 pt-6 first:border-0 first:pt-0">
+      <p className="text-[10px] font-semibold uppercase tracking-[0.16em] text-muted-foreground">
+        {label}
+      </p>
+      <div className="mt-3">{children}</div>
+    </div>
+  );
+}
+
 function riskTone(severity: RiskSeverity): { accent: string } {
   if (severity === "Critical") return { accent: "var(--destructive)" };
   if (severity === "High") return { accent: "var(--destructive)" };
@@ -599,6 +685,44 @@ function buildReport(r: ScoreResult) {
     "WHERE TO FOCUS NEXT",
     soft,
     r.profile.guidance,
+    "",
+    line,
+    "  EXECUTIVE INTERPRETATION",
+    line,
+    "",
+    "1. EXECUTIVE SUMMARY",
+    soft,
+    r.interpretation.executiveSummary,
+    "",
+    "2. PRIMARY STRENGTH",
+    soft,
+    `  ${r.interpretation.primaryStrength.construct}`,
+    "",
+    r.interpretation.primaryStrength.rationale,
+    "",
+    r.interpretation.primaryStrength.behaviour,
+    "",
+    "3. DEVELOPMENT PRIORITY",
+    soft,
+    `  ${r.interpretation.developmentPriority.construct}`,
+    "",
+    r.interpretation.developmentPriority.rationale,
+    "",
+    "4. PRESSURE RESPONSE",
+    soft,
+    r.interpretation.pressureResponse,
+    "",
+    "5. GROWTH POTENTIAL",
+    soft,
+    r.interpretation.growthPotential,
+    "",
+    "6. RECOMMENDED NEXT STEP",
+    soft,
+    r.interpretation.recommendedNextStep,
+    "",
+    "7. REFLECTION QUESTIONS",
+    soft,
+    ...r.interpretation.reflectionQuestions.map((q, i) => `  ${i + 1}. ${q}`),
     "",
     line,
     "  This is a research instrument. It is not a substitute for",
