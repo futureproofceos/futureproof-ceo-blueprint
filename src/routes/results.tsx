@@ -26,7 +26,7 @@ import {
   type Answers,
   type ScoreResult,
 } from "@/lib/assessment";
-import { ArrowLeft, Download, RotateCcw, TrendingUp, AlertTriangle, Sparkles } from "lucide-react";
+import { ArrowLeft, Download, RotateCcw, TrendingUp, AlertTriangle, Sparkles, ShieldAlert } from "lucide-react";
 
 export const Route = createFileRoute("/results")({
   head: () => ({
@@ -163,6 +163,11 @@ function ResultsPage() {
             hint={`${Object.keys(answers).length} of ${QUESTIONS.length} items answered`}
             accent="var(--gold)"
           />
+        </section>
+
+        {/* Primary Structural Risk */}
+        <section className="mt-8">
+          <PrimaryRiskCard risk={result.primaryRisk} />
         </section>
 
         {/* Charts */}
