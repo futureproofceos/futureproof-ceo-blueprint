@@ -246,6 +246,14 @@ export function scoreAssessment(answers: Answers): ScoreResult {
   const growth = growthScore.raw;
   const primaryRisk = derivePrimaryRisk({ purpose, resilience, stewardship, growth });
 
+  const interpretation = deriveInterpretation({
+    coreScores,
+    growthScore,
+    overall,
+    coherence,
+    primaryRisk,
+  });
+
   return {
     scores,
     coreScores,
@@ -259,6 +267,7 @@ export function scoreAssessment(answers: Answers): ScoreResult {
     risks,
     growthModifier,
     primaryRisk,
+    interpretation,
   };
 }
 
