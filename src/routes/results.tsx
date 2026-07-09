@@ -581,6 +581,23 @@ function PrimaryRiskCard({ risk }: { risk: PrimaryRisk }) {
   );
 }
 
+function InterpretationBlock({
+  label,
+  children,
+}: {
+  label: string;
+  children: React.ReactNode;
+}) {
+  return (
+    <div className="border-t border-border/60 pt-6 first:border-0 first:pt-0">
+      <p className="text-[10px] font-semibold uppercase tracking-[0.16em] text-muted-foreground">
+        {label}
+      </p>
+      <div className="mt-3">{children}</div>
+    </div>
+  );
+}
+
 function riskTone(severity: RiskSeverity): { accent: string } {
   if (severity === "Critical") return { accent: "var(--destructive)" };
   if (severity === "High") return { accent: "var(--destructive)" };
