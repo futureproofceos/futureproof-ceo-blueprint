@@ -28,7 +28,7 @@ import {
   type RiskSeverity,
   type ScoreResult,
 } from "@/lib/assessment";
-import { ArrowLeft, Download, RotateCcw, TrendingUp, AlertTriangle, Sparkles, ShieldAlert } from "lucide-react";
+import { ArrowLeft, Download, RotateCcw, TrendingUp, AlertTriangle, Sparkles, ShieldAlert, FileText } from "lucide-react";
 
 export const Route = createFileRoute("/results")({
   head: () => ({
@@ -407,6 +407,75 @@ function ResultsPage() {
             <p className="mt-3 max-w-2xl text-base leading-relaxed text-foreground">
               {result.profile.guidance}
             </p>
+          </Card>
+        </section>
+
+        {/* Executive Interpretation */}
+        <section className="mt-8">
+          <Card className="p-6 shadow-[var(--shadow-card)] sm:p-8">
+            <div className="flex items-center gap-2">
+              <FileText className="h-4 w-4 text-primary" />
+              <h3 className="text-xs font-semibold uppercase tracking-[0.14em] text-primary">
+                Executive Interpretation
+              </h3>
+            </div>
+
+            <div className="mt-6 space-y-8">
+              <InterpretationBlock label="Executive Summary">
+                <p className="text-sm leading-relaxed text-foreground">
+                  {result.interpretation.executiveSummary}
+                </p>
+              </InterpretationBlock>
+
+              <InterpretationBlock label="Primary Strength">
+                <p className="text-base font-semibold tracking-tight text-foreground">
+                  {result.interpretation.primaryStrength.construct}
+                </p>
+                <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
+                  {result.interpretation.primaryStrength.rationale}
+                </p>
+                <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
+                  {result.interpretation.primaryStrength.behaviour}
+                </p>
+              </InterpretationBlock>
+
+              <InterpretationBlock label="Development Priority">
+                <p className="text-base font-semibold tracking-tight text-foreground">
+                  {result.interpretation.developmentPriority.construct}
+                </p>
+                <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
+                  {result.interpretation.developmentPriority.rationale}
+                </p>
+              </InterpretationBlock>
+
+              <InterpretationBlock label="Pressure Response">
+                <p className="text-sm leading-relaxed text-muted-foreground">
+                  {result.interpretation.pressureResponse}
+                </p>
+              </InterpretationBlock>
+
+              <InterpretationBlock label="Growth Potential">
+                <p className="text-sm leading-relaxed text-muted-foreground">
+                  {result.interpretation.growthPotential}
+                </p>
+              </InterpretationBlock>
+
+              <InterpretationBlock label="Recommended Next Step">
+                <p className="text-sm leading-relaxed text-foreground">
+                  {result.interpretation.recommendedNextStep}
+                </p>
+              </InterpretationBlock>
+
+              <InterpretationBlock label="Reflection Questions">
+                <ol className="mt-1 list-decimal space-y-3 pl-5">
+                  {result.interpretation.reflectionQuestions.map((q, i) => (
+                    <li key={i} className="text-sm leading-relaxed text-muted-foreground">
+                      {q}
+                    </li>
+                  ))}
+                </ol>
+              </InterpretationBlock>
+            </div>
           </Card>
         </section>
 
