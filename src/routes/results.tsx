@@ -555,6 +555,20 @@ function buildReport(r: ScoreResult) {
     `  Improvement Potential        : ${r.improvementPotential} / 100`,
     "",
     soft,
+    "PRIMARY STRUCTURAL RISK",
+    soft,
+    `  ${r.primaryRisk.name}`,
+    ...(r.primaryRisk.detected
+      ? [
+          `  Severity: ${r.primaryRisk.severity}   (score gap: ${r.primaryRisk.gap})`,
+          "",
+          r.primaryRisk.description,
+          "",
+          `Recommendation: ${r.primaryRisk.recommendation}`,
+        ]
+      : [r.primaryRisk.description]),
+    "",
+    soft,
     "CONSTRUCT SCORES",
     soft,
     ...r.scores.map(
