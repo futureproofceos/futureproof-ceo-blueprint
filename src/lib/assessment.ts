@@ -142,6 +142,7 @@ export interface ScoreResult {
   strengths: ConstructScore[];
   risks: ConstructScore[];
   growthModifier: GrowthModifier;
+  primaryRisk: PrimaryRisk;
 }
 
 export interface Profile {
@@ -155,6 +156,17 @@ export interface GrowthModifier {
   tier: "High" | "Moderate" | "Emerging";
   label: string;
   recommendation: string;
+}
+
+export type RiskSeverity = "Moderate" | "High" | "Critical" | "None";
+
+export interface PrimaryRisk {
+  name: string;
+  severity: RiskSeverity;
+  gap: number;
+  description: string;
+  recommendation: string;
+  detected: boolean;
 }
 
 function normalize(value: number, reverse: boolean | undefined) {
