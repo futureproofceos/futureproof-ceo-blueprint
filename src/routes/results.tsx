@@ -24,9 +24,11 @@ import {
   STORAGE_KEY,
   scoreAssessment,
   type Answers,
+  type PrimaryRisk,
+  type RiskSeverity,
   type ScoreResult,
 } from "@/lib/assessment";
-import { ArrowLeft, Download, RotateCcw, TrendingUp, AlertTriangle, Sparkles } from "lucide-react";
+import { ArrowLeft, Download, RotateCcw, TrendingUp, AlertTriangle, Sparkles, ShieldAlert } from "lucide-react";
 
 export const Route = createFileRoute("/results")({
   head: () => ({
@@ -163,6 +165,11 @@ function ResultsPage() {
             hint={`${Object.keys(answers).length} of ${QUESTIONS.length} items answered`}
             accent="var(--gold)"
           />
+        </section>
+
+        {/* Primary Structural Risk */}
+        <section className="mt-8">
+          <PrimaryRiskCard risk={result.primaryRisk} />
         </section>
 
         {/* Charts */}
@@ -449,6 +456,69 @@ function tierLabel(v: number) {
   return "Foundational";
 }
 
+function PrimaryRiskCard({ risk }: { risk: PrimaryRisk }) {
+  const tone = riskTone(risk.severity);
+  return (
+    <Card
+      className="p-6 shadow-[var(--shadow-card)] sm:p-8"
+      style={{
+        background: `color-mix(in oklab, ${tone.accent} 4%, var(--card))`,
+        borderColor: `color-mix(in oklab, ${tone.accent} 28%, var(--border))`,
+      }}
+    >
+      <div className="flex items-center gap-2">
+        <ShieldAlert className="h-4 w-4" style={{ color: tone.accent }} />
+        <h3
+          className="text-xs font-semibold uppercase tracking-[0.14em]"
+          style={{ color: tone.accent }}
+        >
+          Primary Structural Risk
+        </h3>
+      </div>
+      <div className="mt-4 grid grid-cols-[minmax(0,1fr)_auto] items-start gap-4">
+        <div className="min-w-0">
+          <h2 className="text-2xl font-semibold tracking-tight text-foreground sm:text-3xl">
+            {risk.name}
+          </h2>
+          {risk.detected ? (
+            <p className="mt-3 max-w-2xl text-sm leading-relaxed text-muted-foreground">
+              {risk.description}
+            </p>
+          ) : (
+            <p className="mt-3 max-w-2xl text-sm leading-relaxed text-muted-foreground">
+              {risk.description}
+            </p>
+          )}
+        </div>
+        {risk.detected && (
+          <Badge
+            variant="outline"
+            className="shrink-0"
+            style={{ borderColor: tone.accent, color: tone.accent }}
+          >
+            {risk.severity}
+          </Badge>
+        )}
+      </div>
+      {risk.detected && risk.recommendation && (
+        <div className="mt-5 border-t border-border/60 pt-4">
+          <p className="text-[10px] font-semibold uppercase tracking-[0.14em] text-muted-foreground">
+            Recommendation
+          </p>
+          <p className="mt-1 text-sm leading-relaxed text-foreground">{risk.recommendation}</p>
+        </div>
+      )}
+    </Card>
+  );
+}
+
+function riskTone(severity: RiskSeverity): { accent: string } {
+  if (severity === "Critical") return { accent: "var(--destructive)" };
+  if (severity === "High") return { accent: "var(--destructive)" };
+  if (severity === "Moderate") return { accent: "var(--gold)" };
+  return { accent: "var(--accent)" };
+}
+
 function coherenceCopy(v: number) {
   if (v >= 85)
     return "Your core architecture is exceptionally coherent. Purpose, resilience, and stewardship carry the load together — a signature of durable, integrated leadership.";
@@ -483,6 +553,20 @@ function buildReport(r: ScoreResult) {
     `  Confidence Index             : ${r.confidence} / 100`,
     `  Growth Readiness (modifier)  : ${r.growthScore.raw} / 100  [${r.growthModifier.tier}]`,
     `  Improvement Potential        : ${r.improvementPotential} / 100`,
+    "",
+    soft,
+    "PRIMARY STRUCTURAL RISK",
+    soft,
+    `  ${r.primaryRisk.name}`,
+    ...(r.primaryRisk.detected
+      ? [
+          `  Severity: ${r.primaryRisk.severity}   (score gap: ${r.primaryRisk.gap})`,
+          "",
+          r.primaryRisk.description,
+          "",
+          `Recommendation: ${r.primaryRisk.recommendation}`,
+        ]
+      : [r.primaryRisk.description]),
     "",
     soft,
     "CONSTRUCT SCORES",

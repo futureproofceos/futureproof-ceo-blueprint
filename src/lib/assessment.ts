@@ -142,6 +142,7 @@ export interface ScoreResult {
   strengths: ConstructScore[];
   risks: ConstructScore[];
   growthModifier: GrowthModifier;
+  primaryRisk: PrimaryRisk;
 }
 
 export interface Profile {
@@ -155,6 +156,17 @@ export interface GrowthModifier {
   tier: "High" | "Moderate" | "Emerging";
   label: string;
   recommendation: string;
+}
+
+export type RiskSeverity = "Moderate" | "High" | "Critical" | "None";
+
+export interface PrimaryRisk {
+  name: string;
+  severity: RiskSeverity;
+  gap: number;
+  description: string;
+  recommendation: string;
+  detected: boolean;
 }
 
 function normalize(value: number, reverse: boolean | undefined) {
@@ -210,6 +222,12 @@ export function scoreAssessment(answers: Answers): ScoreResult {
 
   const profile = deriveProfile(coreScores, coherence, growthScore.raw);
 
+  const purpose = coreScores.find((s) => s.key === "purpose")!.raw;
+  const resilience = coreScores.find((s) => s.key === "resilience")!.raw;
+  const stewardship = coreScores.find((s) => s.key === "stewardship")!.raw;
+  const growth = growthScore.raw;
+  const primaryRisk = derivePrimaryRisk({ purpose, resilience, stewardship, growth });
+
   return {
     scores,
     coreScores,
@@ -222,7 +240,117 @@ export function scoreAssessment(answers: Answers): ScoreResult {
     strengths,
     risks,
     growthModifier,
+    primaryRisk,
   };
+}
+
+function severityFromGap(gap: number): RiskSeverity {
+  if (gap > 30) return "Critical";
+  if (gap >= 21) return "High";
+  return "Moderate"; // gaps that trigger a rule but are ≤ 20
+}
+
+function severityRank(s: RiskSeverity): number {
+  return s === "Critical" ? 3 : s === "High" ? 2 : s === "Moderate" ? 1 : 0;
+}
+
+export function derivePrimaryRisk(scores: {
+  purpose: number;
+  resilience: number;
+  stewardship: number;
+  growth: number;
+}): PrimaryRisk {
+  const { purpose, resilience, stewardship, growth } = scores;
+  const candidates: PrimaryRisk[] = [];
+
+  // Rule 1 — Mission Fatigue
+  if (purpose >= 80 && resilience <= 60) {
+    const gap = purpose - resilience;
+    candidates.push({
+      name: "Mission Fatigue",
+      severity: severityFromGap(gap),
+      gap,
+      description:
+        "Your vision is stronger than your recovery systems. Sustained pressure may eventually reduce judgment, energy and effectiveness.",
+      recommendation: "Build recovery rhythms before expanding responsibility.",
+      detected: true,
+    });
+  }
+
+  // Rule 2 — Shiny Object Drift
+  if (growth >= 80 && purpose <= 60) {
+    const gap = growth - purpose;
+    candidates.push({
+      name: "Shiny Object Drift",
+      severity: severityFromGap(gap),
+      gap,
+      description:
+        "You have a strong desire to grow but insufficient long-term direction. This increases the likelihood of pursuing opportunities that do not align with your purpose.",
+      recommendation: "Clarify your mission before pursuing additional opportunities.",
+      detected: true,
+    });
+  }
+
+  // Rule 3 — Institutional Rigidity
+  if (stewardship >= 80 && growth <= 60) {
+    const gap = stewardship - growth;
+    candidates.push({
+      name: "Institutional Rigidity",
+      severity: severityFromGap(gap),
+      gap,
+      description:
+        "You build stable systems but may resist learning and adaptation.",
+      recommendation: "Increase feedback, experimentation and continuous learning.",
+      detected: true,
+    });
+  }
+
+  // Rule 4 — High Performer Trap
+  if (purpose >= 80 && resilience >= 80 && stewardship <= 60) {
+    const gap = Math.min(purpose, resilience) - stewardship;
+    candidates.push({
+      name: "High Performer Trap",
+      severity: severityFromGap(gap),
+      gap,
+      description:
+        "You perform well personally but your impact depends too heavily on your own effort.",
+      recommendation: "Focus on delegation, multiplication and institution building.",
+      detected: true,
+    });
+  }
+
+  // Rule 5 — Efficient but Directionless
+  if (purpose <= 60 && resilience >= 75) {
+    const gap = resilience - purpose;
+    candidates.push({
+      name: "Efficient but Directionless",
+      severity: severityFromGap(gap),
+      gap,
+      description:
+        "You perform consistently under pressure but lack a compelling long-term direction.",
+      recommendation: "Clarify purpose before increasing activity.",
+      detected: true,
+    });
+  }
+
+  if (candidates.length === 0) {
+    return {
+      name: "No significant structural risk detected.",
+      severity: "None",
+      gap: 0,
+      description:
+        "No combination of scores currently indicates a primary structural risk. Continue reinforcing the core three and revisit as your context changes.",
+      recommendation: "",
+      detected: false,
+    };
+  }
+
+  // Highest severity wins; tiebreak by largest gap.
+  candidates.sort((a, b) => {
+    const s = severityRank(b.severity) - severityRank(a.severity);
+    return s !== 0 ? s : b.gap - a.gap;
+  });
+  return candidates[0];
 }
 
 function deriveGrowthModifier(growth: number): GrowthModifier {
