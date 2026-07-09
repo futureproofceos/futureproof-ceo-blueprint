@@ -462,3 +462,200 @@ function deriveProfile(coreScores: ConstructScore[], coherence: number, _growth:
 }
 
 export const STORAGE_KEY = "iad_answers_v1";
+
+// ---------- Executive Interpretation ----------
+
+type Band = "high" | "moderate" | "low";
+
+function band(v: number): Band {
+  if (v >= 70) return "high";
+  if (v >= 55) return "moderate";
+  return "low";
+}
+
+function integrityBand(v: number): "high" | "solid" | "developing" | "foundational" {
+  if (v >= 80) return "high";
+  if (v >= 65) return "solid";
+  if (v >= 50) return "developing";
+  return "foundational";
+}
+
+const STRENGTH_BEHAVIOUR: Record<Exclude<ConstructKey, "growth">, string> = {
+  purpose:
+    "In practice this shows up as decisive prioritisation, calm refusal of off-mission opportunities, and an organising narrative that others can repeat without prompting.",
+  resilience:
+    "In practice this shows up as steady judgment when the room destabilises, faster recovery from setbacks, and a composure that quietly regulates the people around you.",
+  stewardship:
+    "In practice this shows up as careful protection of people and capital, disciplined follow-through on commitments, and decisions that account for second- and third-order effects.",
+};
+
+const DEV_RATIONALE: Record<Exclude<ConstructKey, "growth">, string> = {
+  purpose:
+    "Strengthening purpose gives every other capacity a direction to serve. Without it, resilience becomes endurance for its own sake and stewardship narrows into maintenance.",
+  resilience:
+    "Strengthening resilience protects the quality of your judgment across cycles. Without it, purpose becomes brittle and stewardship absorbs stress it was not designed to carry.",
+  stewardship:
+    "Strengthening stewardship converts personal performance into institutional durability. Without it, purpose and resilience remain dependent on your continued presence.",
+};
+
+function deriveInterpretation(input: {
+  coreScores: ConstructScore[];
+  growthScore: ConstructScore;
+  overall: number;
+  coherence: number;
+  primaryRisk: PrimaryRisk;
+}): ExecutiveInterpretation {
+  const { coreScores, growthScore, overall, coherence, primaryRisk } = input;
+  const sorted = [...coreScores].sort((a, b) => b.raw - a.raw);
+  const top = sorted[0];
+  const bottom = sorted[sorted.length - 1];
+  const topKey = top.key as Exclude<ConstructKey, "growth">;
+  const bottomKey = bottom.key as Exclude<ConstructKey, "growth">;
+
+  const purpose = coreScores.find((s) => s.key === "purpose")!.raw;
+  const resilience = coreScores.find((s) => s.key === "resilience")!.raw;
+  const stewardship = coreScores.find((s) => s.key === "stewardship")!.raw;
+  const growth = growthScore.raw;
+
+  // ---------- Executive summary (120–180 words) ----------
+  const iBand = integrityBand(overall);
+  const coherenceLine =
+    coherence >= 80
+      ? "The three load-bearing architectures move together, which is what allows leaders to remain the same person in calm and in crisis."
+      : coherence >= 65
+        ? "The three architectures are broadly aligned, though one is quietly carrying more of the load than the others."
+        : "There is meaningful asymmetry across the three architectures — a signature that often produces strong short-term performance and slower institutional durability.";
+
+  const leadingLine = {
+    purpose:
+      "Your leadership tends to be organised by conviction: decisions are filtered through what you believe the work is ultimately for.",
+    resilience:
+      "Your leadership tends to be organised by composure: you regulate the emotional temperature of the room before you act on it.",
+    stewardship:
+      "Your leadership tends to be organised by responsibility: you feel the weight of what has been entrusted to you and act to protect it.",
+  }[topKey];
+
+  const pressureLine =
+    resilience >= 70 && purpose >= 70
+      ? "Under pressure you are likely to hold both direction and composure, which lets others borrow stability from you."
+      : resilience >= 70
+        ? "Under pressure you hold steady, though without a strong enough anchor of purpose that composure can drift into reactive execution."
+        : purpose >= 70
+          ? "Under pressure you know where you are heading, but the physiological cost of holding that line may quietly accumulate."
+          : "Under pressure the current architecture is likely to strain — clarity narrows and recovery time lengthens before either is consciously noticed.";
+
+  const trailingLine =
+    growth >= 70
+      ? "Openness to feedback is a genuine asset; the raw material for change is present."
+      : growth >= 55
+        ? "There is moderate openness to feedback, which means change is possible but requires deliberate structure to compound."
+        : "Openness to feedback is currently the rate-limiter; without it, even good interventions tend not to stick.";
+
+  const integrityLine = {
+    high: "The overall architecture is durable and can be built upon rather than repaired.",
+    solid: "The overall architecture is solid but has clear places where load is unevenly distributed.",
+    developing: "The overall architecture is still consolidating; this is a formative rather than a fixed picture.",
+    foundational:
+      "The overall architecture is early in its formation, which is a productive place to lead from when treated as a design problem rather than a verdict.",
+  }[iBand];
+
+  const executiveSummary = [
+    leadingLine,
+    coherenceLine,
+    pressureLine,
+    integrityLine,
+    trailingLine,
+  ].join(" ");
+
+  // ---------- Primary strength ----------
+  const primaryStrength = {
+    construct: top.name,
+    rationale: `${top.name} is the most developed of your three load-bearing architectures. It is the capacity others are most likely to rely on when the environment becomes uncertain, and it forms the platform the rest of your leadership currently rests on.`,
+    behaviour: STRENGTH_BEHAVIOUR[topKey],
+  };
+
+  // ---------- Development priority ----------
+  const developmentPriority = {
+    construct: bottom.name,
+    rationale: `${bottom.name} is the shortest wall in your current architecture. Because Structural Integrity is bounded by its weakest load-bearer, targeted investment here typically produces disproportionate lift in how the whole system behaves under load. ${DEV_RATIONALE[bottomKey]}`,
+  };
+
+  // ---------- Pressure response ----------
+  let pressureResponse: string;
+  if (resilience >= 70 && purpose >= 70 && stewardship >= 70) {
+    pressureResponse =
+      "During prolonged uncertainty you are likely to become a stabilising centre for the people around you: direction stays legible, composure remains available, and the systems you have built continue to function. The risk to watch is quiet over-extension — being the person who holds everything together can obscure your own accumulating cost.";
+  } else if (resilience <= 60 && purpose >= 70) {
+    pressureResponse =
+      "During prolonged uncertainty you are likely to keep pushing toward the mission after your recovery systems have begun to run down. Judgment usually holds longer than energy does, so the earliest warning signs will show up in irritability, sleep, and the shortening of your patience with people you care about — not in the strategic decisions themselves.";
+  } else if (purpose <= 60 && resilience >= 70) {
+    pressureResponse =
+      "During prolonged uncertainty you are likely to keep functioning at a high level of execution, but without a strong enough anchor of purpose that effort can quietly become activity for its own sake. The risk is efficient motion in a direction you have not recently examined.";
+  } else if (stewardship <= 60 && purpose >= 70 && resilience >= 70) {
+    pressureResponse =
+      "During prolonged uncertainty you are likely to carry more of the operational load yourself rather than distribute it. Personal performance stays high; institutional durability quietly does not keep pace.";
+  } else if (growth <= 55) {
+    pressureResponse =
+      "During prolonged uncertainty the most likely constraint is a narrowing of the range of inputs you take seriously. Under load, feedback that would normally reach you tends to be filtered out, which can make the situation appear more stable than it is.";
+  } else {
+    pressureResponse =
+      "During prolonged uncertainty your leadership is likely to hold together, but with visible asymmetry: one architecture will carry the weight while the others recede. Naming which one is being asked to do most is the first act of protection.";
+  }
+
+  // ---------- Growth potential ----------
+  let growthPotential: string;
+  if (growth > 80) {
+    growthPotential =
+      "Growth Readiness is high. You already run the feedback loops, mentorship, and reflective practice that make change stick, which means targeted coaching is likely to produce rapid, compounding improvement — often faster than you expect.";
+  } else if (growth >= 60) {
+    growthPotential =
+      "Growth Readiness is in the working range. Development is genuinely available to you, but it will require intentional practice — structured feedback, a small number of deliberate experiments, and someone whose opinion you trust to hold up a mirror.";
+  } else {
+    growthPotential =
+      "Growth Readiness is currently the first thing to strengthen. Before restructuring any of the load-bearing architectures, invest in the mindset side: honest feedback loops, protected time for reflection, and a willingness to update beliefs you have held for a long time.";
+  }
+
+  // ---------- Recommended next step ----------
+  const riskClause = primaryRisk.detected
+    ? ` while remaining alert to the pattern of ${primaryRisk.name.toLowerCase()}, which your current profile is most exposed to`
+    : "";
+  const recommendedNextStep = `Over the next 90 days, run one focused build on ${bottom.name.toLowerCase()} and deliberately deploy your ${top.name.toLowerCase()} to protect the process${riskClause}. Concretely: use the discipline your ${top.short.toLowerCase()} already provides to install a small, repeatable practice inside ${bottom.short.toLowerCase()} — one that happens on a schedule rather than only when convenient — and review it monthly with someone whose feedback you cannot dismiss.`;
+
+  // ---------- Reflection questions ----------
+  const reflectionQuestions: string[] = [];
+  reflectionQuestions.push(
+    `Where in the last quarter did your ${top.short.toLowerCase()} do work that ${bottom.short.toLowerCase()} should have been doing — and what did that quietly cost?`,
+  );
+  if (primaryRisk.detected) {
+    reflectionQuestions.push(
+      `If the pattern of "${primaryRisk.name}" were fully visible to the people closest to you, what would they say they have been absorbing on your behalf?`,
+    );
+  } else if (band(resilience) === "low") {
+    reflectionQuestions.push(
+      "What is the earliest, most reliable signal that tells you your recovery systems are running down — and who else can see it before you do?",
+    );
+  } else {
+    reflectionQuestions.push(
+      "Which part of your leadership currently depends on you being present for it to function — and what would it take for that to no longer be true?",
+    );
+  }
+  if (growth < 60) {
+    reflectionQuestions.push(
+      "What is a belief about your leadership you have held for more than three years that you have not seriously examined recently?",
+    );
+  } else {
+    reflectionQuestions.push(
+      `Three years from now, if ${bottom.name.toLowerCase()} were your strongest architecture rather than your weakest, what would you be doing differently on a Tuesday morning?`,
+    );
+  }
+
+  return {
+    executiveSummary,
+    primaryStrength,
+    developmentPriority,
+    pressureResponse,
+    growthPotential,
+    recommendedNextStep,
+    reflectionQuestions,
+  };
+}
