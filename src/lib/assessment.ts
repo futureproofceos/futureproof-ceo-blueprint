@@ -93,7 +93,7 @@ export const QUESTIONS: Question[] = [
   { id: "r10", construct: "resilience", text: "My identity is not dependent on the next result going well." },
   { id: "r11", construct: "resilience", text: "I have a clear internal signal that tells me when to slow down before I break." },
 
-  // Stewardship Architecture
+  // Legacy Architecture
   { id: "s1", construct: "stewardship", text: "I treat the capital under my authority as if it belonged to someone I love." },
   { id: "s2", construct: "stewardship", text: "I actively protect the people who depend on my decisions, even at personal cost." },
   { id: "s3", construct: "stewardship", text: "I have clear ethical lines I will not cross, even for significant gain." },
@@ -106,7 +106,7 @@ export const QUESTIONS: Question[] = [
   { id: "s10", construct: "stewardship", text: "I honor commitments even when circumstances make them costly." },
   { id: "s11", construct: "stewardship", text: "I consider the second- and third-order effects of my major decisions." },
 
-  // Growth Readiness
+  // Growth Readiness Index
   { id: "g1", construct: "growth", text: "I actively invite feedback from people who will disagree with me." },
   { id: "g2", construct: "growth", text: "I have changed a significant belief in the past year based on evidence." },
   { id: "g3", construct: "growth", text: "I invest deliberate time each week in learning outside my domain." },
@@ -147,7 +147,7 @@ export interface ScoreResult {
   overall: number;
   confidence: number; // 0–100
   coherence: number;  // 0–100 (100 = perfectly coherent across core three)
-  improvementPotential: number; // 0–100 — derived from Growth Readiness + headroom
+  improvementPotential: number; // 0–100 — derived from Growth Readiness Index + headroom
   profile: Profile;
   strengths: ConstructScore[];
   risks: ConstructScore[];
@@ -223,7 +223,7 @@ export function scoreAssessment(answers: Answers): ScoreResult {
   const totalItems = scores.reduce((a, s) => a + s.total, 0);
 
   // Overall Structural Integrity: mean of the three core load-bearing constructs.
-  // Growth Readiness is intentionally excluded — it modifies development, not structure.
+  // Growth Readiness Index is intentionally excluded — it modifies development, not structure.
   const coreScores = scores.filter((s) => s.key !== "growth");
   const growthScore = scores.find((s) => s.key === "growth")!;
   const overall = Math.round(
@@ -396,20 +396,20 @@ function deriveGrowthModifier(growth: number): GrowthModifier {
       tier: "High",
       label: "High developmental velocity",
       recommendation:
-        "Growth Readiness is high. Improvements to the core three will compound quickly — pursue an ambitious 90-day plan.",
+        "Growth Readiness Index is high. Improvements to the core three will compound quickly — pursue an ambitious 90-day plan.",
     };
   if (growth >= 50)
     return {
       tier: "Moderate",
       label: "Moderate developmental velocity",
       recommendation:
-        "Growth Readiness is moderate. Pair each core-construct intervention with one deliberate learning practice to accelerate uptake.",
+        "Growth Readiness Index is moderate. Pair each core-construct intervention with one deliberate learning practice to accelerate uptake.",
     };
   return {
     tier: "Emerging",
     label: "Emerging developmental velocity",
     recommendation:
-      "Growth Readiness is the rate-limiter. Before restructuring the core, invest in feedback loops, mentorship, and reflection — otherwise gains will not stick.",
+      "Growth Readiness Index is the rate-limiter. Before restructuring the core, invest in feedback loops, mentorship, and reflection — otherwise gains will not stick.",
   };
 }
 
@@ -425,7 +425,7 @@ function deriveProfile(coreScores: ConstructScore[], coherence: number, _growth:
       title: "The Integrated Steward",
       archetype: "Rare — top decile inner architecture",
       summary:
-        "Your inner architecture is coherent across the three load-bearing constructs. You lead from a stable center: clear purpose, sustainable resilience, and disciplined stewardship.",
+        "Your inner architecture is coherent across the three load-bearing constructs. You lead from a stable center: clear purpose, sustainable resilience, and disciplined legacy building.",
       guidance:
         "Your work now is to compound. Codify what you know so it survives you, and mentor the leaders who will inherit the systems you have built.",
     };
@@ -460,11 +460,11 @@ function deriveProfile(coreScores: ConstructScore[], coherence: number, _growth:
     },
     stewardship: {
       title: "The Trusted Custodian",
-      archetype: "Stewardship-led leader",
+      archetype: "Legacy-led leader",
       summary:
         "You treat what has been entrusted to you with real weight. People, capital, and reputation are safer because of how you hold them.",
       guidance:
-        "Stewardship can quietly slide into over-control. Practice releasing what growth-oriented leaders around you can now carry.",
+        "Legacy building can quietly slide into over-control. Practice releasing what growth-oriented leaders around you can now carry.",
     },
   };
 
@@ -501,11 +501,11 @@ const STRENGTH_BEHAVIOUR: Record<Exclude<ConstructKey, "growth">, string> = {
 
 const DEV_RATIONALE: Record<Exclude<ConstructKey, "growth">, string> = {
   purpose:
-    "Strengthening purpose gives every other capacity a direction to serve. Without it, resilience becomes endurance for its own sake and stewardship narrows into maintenance.",
+    "Strengthening purpose gives every other capacity a direction to serve. Without it, resilience becomes endurance for its own sake and legacy narrows into maintenance.",
   resilience:
-    "Strengthening resilience protects the quality of your judgment across cycles. Without it, purpose becomes brittle and stewardship absorbs stress it was not designed to carry.",
+    "Strengthening resilience protects the quality of your judgment across cycles. Without it, purpose becomes brittle and legacy absorbs stress it was not designed to carry.",
   stewardship:
-    "Strengthening stewardship converts personal performance into institutional durability. Without it, purpose and resilience remain dependent on your continued presence.",
+    "Strengthening legacy converts personal performance into institutional durability. Without it, purpose and resilience remain dependent on your continued presence.",
 };
 
 function deriveInterpretation(input: {
@@ -616,13 +616,13 @@ function deriveInterpretation(input: {
   let growthPotential: string;
   if (growth > 80) {
     growthPotential =
-      "Growth Readiness is high. You already run the feedback loops, mentorship, and reflective practice that make change stick, which means targeted coaching is likely to produce rapid, compounding improvement — often faster than you expect.";
+      "Growth Readiness Index is high. You already run the feedback loops, mentorship, and reflective practice that make change stick, which means targeted coaching is likely to produce rapid, compounding improvement — often faster than you expect.";
   } else if (growth >= 60) {
     growthPotential =
-      "Growth Readiness is in the working range. Development is genuinely available to you, but it will require intentional practice — structured feedback, a small number of deliberate experiments, and someone whose opinion you trust to hold up a mirror.";
+      "Growth Readiness Index is in the working range. Development is genuinely available to you, but it will require intentional practice — structured feedback, a small number of deliberate experiments, and someone whose opinion you trust to hold up a mirror.";
   } else {
     growthPotential =
-      "Growth Readiness is currently the first thing to strengthen. Before restructuring any of the load-bearing architectures, invest in the mindset side: honest feedback loops, protected time for reflection, and a willingness to update beliefs you have held for a long time.";
+      "Growth Readiness Index is currently the first thing to strengthen. Before restructuring any of the load-bearing architectures, invest in the mindset side: honest feedback loops, protected time for reflection, and a willingness to update beliefs you have held for a long time.";
   }
 
   // ---------- Recommended next step ----------
