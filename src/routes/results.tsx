@@ -306,7 +306,7 @@ function ResultsPage() {
           </Card>
         </section>
 
-        {/* Growth Readiness modifier */}
+        {/* Growth Readiness Index modifier */}
         <section className="mt-8">
           <Card
             className="p-6 shadow-[var(--shadow-card)] sm:p-8"
@@ -321,14 +321,14 @@ function ResultsPage() {
                   Developmental modifier
                 </p>
                 <h2 className="mt-1 text-lg font-semibold tracking-tight text-foreground">
-                  Growth Readiness · {result.growthModifier.tier}
+                  Growth Readiness Index · {result.growthModifier.tier}
                 </h2>
                 <p className="mt-2 max-w-2xl text-sm leading-relaxed text-muted-foreground">
                   {result.growthModifier.recommendation}
                 </p>
                 <div className="mt-4 grid grid-cols-2 gap-4 sm:max-w-md">
                   <div>
-                    <p className="text-[10px] uppercase tracking-wider text-muted-foreground">Growth Readiness</p>
+                    <p className="text-[10px] uppercase tracking-wider text-muted-foreground">Growth Readiness Index</p>
                     <p className="text-2xl font-semibold tabular-nums" style={{ color: "var(--accent)" }}>
                       {result.growthScore.raw}<span className="text-sm text-muted-foreground"> / 100</span>
                     </p>
@@ -640,7 +640,7 @@ function riskTone(severity: RiskSeverity): { accent: string } {
 
 function coherenceCopy(v: number) {
   if (v >= 85)
-    return "Your core architecture is exceptionally coherent. Purpose, resilience, and stewardship carry the load together — a signature of durable, integrated leadership.";
+    return "Your core architecture is exceptionally coherent. Purpose, Resilience and Legacy carry the load together — a signature of durable, integrated leadership.";
   if (v >= 70)
     return "Your core architecture is coherent. Minor asymmetries exist across the three load-bearing constructs but the structure holds under load.";
   if (v >= 55)
