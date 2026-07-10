@@ -306,7 +306,7 @@ function ResultsPage() {
           </Card>
         </section>
 
-        {/* Growth Readiness modifier */}
+        {/* Growth Readiness Index modifier */}
         <section className="mt-8">
           <Card
             className="p-6 shadow-[var(--shadow-card)] sm:p-8"
@@ -321,14 +321,14 @@ function ResultsPage() {
                   Developmental modifier
                 </p>
                 <h2 className="mt-1 text-lg font-semibold tracking-tight text-foreground">
-                  Growth Readiness · {result.growthModifier.tier}
+                  Growth Readiness Index · {result.growthModifier.tier}
                 </h2>
                 <p className="mt-2 max-w-2xl text-sm leading-relaxed text-muted-foreground">
                   {result.growthModifier.recommendation}
                 </p>
                 <div className="mt-4 grid grid-cols-2 gap-4 sm:max-w-md">
                   <div>
-                    <p className="text-[10px] uppercase tracking-wider text-muted-foreground">Growth Readiness</p>
+                    <p className="text-[10px] uppercase tracking-wider text-muted-foreground">Growth Readiness Index</p>
                     <p className="text-2xl font-semibold tabular-nums" style={{ color: "var(--accent)" }}>
                       {result.growthScore.raw}<span className="text-sm text-muted-foreground"> / 100</span>
                     </p>
@@ -640,7 +640,7 @@ function riskTone(severity: RiskSeverity): { accent: string } {
 
 function coherenceCopy(v: number) {
   if (v >= 85)
-    return "Your core architecture is exceptionally coherent. Purpose, resilience, and stewardship carry the load together — a signature of durable, integrated leadership.";
+    return "Your core architecture is exceptionally coherent. Purpose, Resilience and Legacy carry the load together — a signature of durable, integrated leadership.";
   if (v >= 70)
     return "Your core architecture is coherent. Minor asymmetries exist across the three load-bearing constructs but the structure holds under load.";
   if (v >= 55)
@@ -652,6 +652,10 @@ function buildReport(r: ScoreResult) {
   const line = "=".repeat(64);
   const soft = "-".repeat(64);
   const now = new Date().toLocaleString();
+  const core = r.coreScores;
+  const purposeScore = core.find((s) => s.key === "purpose")!;
+  const resilienceScore = core.find((s) => s.key === "resilience")!;
+  const legacyScore = core.find((s) => s.key === "stewardship")!;
   return [
     line,
     "  INNER ARCHITECTURE DIAGNOSTIC™",
@@ -665,13 +669,42 @@ function buildReport(r: ScoreResult) {
     r.profile.summary,
     "",
     soft,
-    "OVERALL METRICS",
+    "IDENTITY FOUNDATION (theoretical foundation — not measured in v1)",
     soft,
-    `  Overall Structural Integrity : ${r.overall} / 100   (core three)`,
-    `  Structural Coherence         : ${r.coherence} / 100`,
-    `  Confidence Index             : ${r.confidence} / 100`,
-    `  Growth Readiness (modifier)  : ${r.growthScore.raw} / 100  [${r.growthModifier.tier}]`,
-    `  Improvement Potential        : ${r.improvementPotential} / 100`,
+    IDENTITY_FOUNDATION.short,
+    "",
+    IDENTITY_FOUNDATION.interpretation,
+    "",
+    `Research roadmap: ${IDENTITY_FOUNDATION.roadmap}`,
+    "",
+    soft,
+    "CORE ARCHITECTURES",
+    soft,
+    `  1. ${purposeScore.name.padEnd(26)} ${String(purposeScore.raw).padStart(3)} / 100   (${tierLabel(purposeScore.raw)})`,
+    `  2. ${resilienceScore.name.padEnd(26)} ${String(resilienceScore.raw).padStart(3)} / 100   (${tierLabel(resilienceScore.raw)})`,
+    `  3. ${legacyScore.name.padEnd(26)} ${String(legacyScore.raw).padStart(3)} / 100   (${tierLabel(legacyScore.raw)})`,
+    "",
+    soft,
+    "STRUCTURAL INTEGRITY",
+    soft,
+    `  Overall Structural Integrity : ${r.overall} / 100`,
+    "  (Mean of Purpose, Resilience and Legacy. The Growth Readiness Index",
+    "   is a developmental modifier and does not contribute to this score.)",
+    "",
+    soft,
+    "STRUCTURAL COHERENCE",
+    soft,
+    `  Structural Coherence : ${r.coherence} / 100`,
+    "",
+    coherenceCopy(r.coherence),
+    "",
+    soft,
+    "GROWTH READINESS INDEX (developmental modifier)",
+    soft,
+    `  Growth Readiness Index : ${r.growthScore.raw} / 100   [${r.growthModifier.tier}]`,
+    `  Improvement Potential  : ${r.improvementPotential} / 100`,
+    "",
+    r.growthModifier.recommendation,
     "",
     soft,
     "PRIMARY STRUCTURAL RISK",
@@ -686,38 +719,6 @@ function buildReport(r: ScoreResult) {
           `Recommendation: ${r.primaryRisk.recommendation}`,
         ]
       : [r.primaryRisk.description]),
-    "",
-    soft,
-    "CONSTRUCT SCORES",
-    soft,
-    ...r.scores.map(
-      (s) => `  ${s.name.padEnd(28)} ${String(s.raw).padStart(3)} / 100   (${tierLabel(s.raw)})`,
-    ),
-    "",
-    soft,
-    "LOAD-BEARING STRENGTHS",
-    soft,
-    ...r.strengths.map((s) => `  • ${s.name} — ${s.raw}/100 (${tierLabel(s.raw)})`),
-    "",
-    soft,
-    "QUIET RISKS",
-    soft,
-    ...r.risks.map((s) => `  • ${s.name} — ${s.raw}/100 (${tierLabel(s.raw)})`),
-    "",
-    soft,
-    "STRUCTURAL COHERENCE",
-    soft,
-    coherenceCopy(r.coherence),
-    "",
-    soft,
-    "GROWTH READINESS MODIFIER",
-    soft,
-    r.growthModifier.recommendation,
-    "",
-    soft,
-    "WHERE TO FOCUS NEXT",
-    soft,
-    r.profile.guidance,
     "",
     line,
     "  EXECUTIVE INTERPRETATION",
@@ -735,7 +736,7 @@ function buildReport(r: ScoreResult) {
     "",
     r.interpretation.primaryStrength.behaviour,
     "",
-    "3. DEVELOPMENT PRIORITY",
+    "3. DEVELOPMENT PRIORITIES",
     soft,
     `  ${r.interpretation.developmentPriority.construct}`,
     "",
@@ -757,15 +758,14 @@ function buildReport(r: ScoreResult) {
     soft,
     ...r.interpretation.reflectionQuestions.map((q, i) => `  ${i + 1}. ${q}`),
     "",
-    line,
-    "  IDENTITY FOUNDATION",
-    line,
+    soft,
+    "WHERE TO FOCUS NEXT",
+    soft,
+    r.profile.guidance,
     "",
-    IDENTITY_FOUNDATION.short,
-    "",
-    IDENTITY_FOUNDATION.interpretation,
-    "",
-    `Research roadmap: ${IDENTITY_FOUNDATION.roadmap}`,
+    soft,
+    `Confidence Index: ${r.confidence} / 100`,
+    soft,
     "",
     line,
     "  This is a research instrument. It is not a substitute for",
