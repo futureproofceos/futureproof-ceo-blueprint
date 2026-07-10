@@ -78,7 +78,7 @@ function Landing() {
               Three Core Architectures. One Developmental Indicator.
             </h2>
             <p className="mt-5 text-lg text-muted-foreground">
-              Purpose, Resilience, and Stewardship are the load-bearing architectures of durable leadership. Growth Readiness is the developmental indicator that governs how quickly they can strengthen.
+              Purpose, Resilience and Legacy are the three load-bearing architectures of durable leadership. The Growth Readiness Index is a developmental modifier — it governs how quickly the three core architectures can strengthen and personalises the recommendations you receive.
             </p>
           </div>
 
@@ -123,7 +123,7 @@ function Landing() {
               Identity Foundation
             </h3>
             <p className="mt-3 max-w-3xl text-sm leading-relaxed text-muted-foreground">
-              The three core architectures rest upon a deeper Identity Foundation — the sense of self from which a leader acts. In this research beta, Identity Foundation is treated as the theoretical bedrock of the framework and is not directly measured. Its dedicated instrumentation is on the FutureProofCEOs research roadmap.
+              Purpose, Resilience and Legacy rest upon a deeper Identity Foundation — the sense of self from which they are expressed. In Research Beta Version 1, Identity Foundation is the theoretical bedrock of the framework and is not directly measured; a dedicated Identity Foundation module is on the FutureProofCEOs research roadmap.
             </p>
           </div>
         </div>
