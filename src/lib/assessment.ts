@@ -422,7 +422,7 @@ function deriveProfile(coreScores: ConstructScore[], coherence: number, _growth:
 
   if (overallHigh && highCoherence) {
     return {
-      title: "The Integrated Steward",
+      title: "The Integrated Builder",
       archetype: "Rare — top decile inner architecture",
       summary:
         "Your inner architecture is coherent across the three load-bearing constructs. You lead from a stable center: clear purpose, sustainable resilience, and disciplined legacy building.",
