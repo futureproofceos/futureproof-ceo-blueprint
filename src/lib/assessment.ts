@@ -459,12 +459,12 @@ function deriveProfile(coreScores: ConstructScore[], coherence: number, _growth:
         "Endurance without direction is expensive. Sharpen your purpose so your resilience is deployed toward what you most want to build.",
     },
     stewardship: {
-      title: "The Trusted Custodian",
+      title: "The Enduring Builder",
       archetype: "Legacy-led leader",
       summary:
-        "You treat what has been entrusted to you with real weight. People, capital, and reputation are safer because of how you hold them.",
+        "You lead in a way that outlasts your direct involvement. People, systems, institutions and culture you touch are being built to continue beyond you.",
       guidance:
-        "Legacy building can quietly slide into over-control. Practice releasing what growth-oriented leaders around you can now carry.",
+        "Legacy building can quietly slide into over-control. Practice releasing what growth-oriented leaders around you can now carry, so what you build genuinely continues without you.",
     },
   };
 
@@ -496,7 +496,7 @@ const STRENGTH_BEHAVIOUR: Record<Exclude<ConstructKey, "growth">, string> = {
   resilience:
     "In practice this shows up as steady judgment when the room destabilises, faster recovery from setbacks, and a composure that quietly regulates the people around you.",
   stewardship:
-    "In practice this shows up as careful protection of people and capital, disciplined follow-through on commitments, and decisions that account for second- and third-order effects.",
+    "In practice this shows up as building systems, culture and successors that continue without you, disciplined follow-through on commitments, and decisions that account for second- and third-order effects.",
 };
 
 const DEV_RATIONALE: Record<Exclude<ConstructKey, "growth">, string> = {
@@ -505,7 +505,7 @@ const DEV_RATIONALE: Record<Exclude<ConstructKey, "growth">, string> = {
   resilience:
     "Strengthening resilience protects the quality of your judgment across cycles. Without it, purpose becomes brittle and legacy absorbs stress it was not designed to carry.",
   stewardship:
-    "Strengthening legacy converts personal performance into institutional durability. Without it, purpose and resilience remain dependent on your continued presence.",
+    "Strengthening Legacy Architecture converts personal performance into institutional durability. Without it, purpose and resilience remain dependent on your continued presence.",
 };
 
 function deriveInterpretation(input: {
@@ -542,7 +542,7 @@ function deriveInterpretation(input: {
     resilience:
       "Your leadership tends to be organised by composure: you regulate the emotional temperature of the room before you act on it.",
     stewardship:
-      "Your leadership tends to be organised by responsibility: you feel the weight of what has been entrusted to you and act to protect it.",
+      "Your leadership tends to be organised by legacy: you build people, systems and institutions designed to continue beyond your direct involvement.",
   }[topKey];
 
   const pressureLine =
