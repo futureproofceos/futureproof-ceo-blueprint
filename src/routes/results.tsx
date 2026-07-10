@@ -20,6 +20,7 @@ import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
 import {
   CONSTRUCTS,
+  IDENTITY_FOUNDATION,
   QUESTIONS,
   STORAGE_KEY,
   scoreAssessment,
@@ -28,7 +29,7 @@ import {
   type RiskSeverity,
   type ScoreResult,
 } from "@/lib/assessment";
-import { ArrowLeft, Download, RotateCcw, TrendingUp, AlertTriangle, Sparkles, ShieldAlert, FileText } from "lucide-react";
+import { ArrowLeft, Download, RotateCcw, TrendingUp, AlertTriangle, Sparkles, ShieldAlert, FileText, Layers } from "lucide-react";
 
 export const Route = createFileRoute("/results")({
   head: () => ({
@@ -475,6 +476,38 @@ function ResultsPage() {
                   ))}
                 </ol>
               </InterpretationBlock>
+            </div>
+          </Card>
+        </section>
+
+        {/* Identity Foundation */}
+        <section className="mt-8">
+          <Card
+            className="p-6 shadow-[var(--shadow-card)] sm:p-8"
+            style={{
+              background: "color-mix(in oklab, var(--accent) 4%, var(--card))",
+              borderColor: "color-mix(in oklab, var(--accent) 22%, var(--border))",
+            }}
+          >
+            <div className="flex items-center gap-2">
+              <Layers className="h-4 w-4" style={{ color: "var(--accent)" }} />
+              <h3 className="text-xs font-semibold uppercase tracking-[0.14em]" style={{ color: "var(--accent)" }}>
+                Identity Foundation
+              </h3>
+            </div>
+            <p className="mt-4 text-base font-semibold tracking-tight text-foreground">
+              {IDENTITY_FOUNDATION.short}
+            </p>
+            <p className="mt-3 max-w-3xl text-sm leading-relaxed text-muted-foreground">
+              {IDENTITY_FOUNDATION.interpretation}
+            </p>
+            <div className="mt-5 border-t border-border/60 pt-4">
+              <p className="text-[10px] font-semibold uppercase tracking-[0.14em] text-muted-foreground">
+                Research Roadmap
+              </p>
+              <p className="mt-1 text-sm leading-relaxed text-foreground">
+                {IDENTITY_FOUNDATION.roadmap}
+              </p>
             </div>
           </Card>
         </section>
