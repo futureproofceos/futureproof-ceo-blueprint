@@ -1,5 +1,15 @@
 export type ConstructKey = "purpose" | "resilience" | "stewardship" | "growth";
 
+export const IDENTITY_FOUNDATION = {
+  title: "Identity Foundation",
+  short:
+    "The three core architectures rest upon a deeper Identity Foundation — the sense of self from which a leader acts.",
+  interpretation:
+    "Identity Foundation refers to the underlying sense of self from which purpose is expressed, resilience is sustained, and stewardship is exercised. It shapes every architecture measured in this diagnostic, but it is not itself scored in Version 1. This research beta focuses on the three load-bearing architectures because their behavioural signals are stable enough to measure reliably. Identity Foundation operates upstream of behaviour and requires a different instrumentation approach — one the FutureProofCEOs Institute is actively developing. Treat your results as an accurate read on the structures identity produces, and treat Identity itself as the next layer of inquiry rather than a gap in this report.",
+  roadmap:
+    "A dedicated Identity Foundation module is on the FutureProofCEOs research roadmap for a future release of the Inner Architecture Diagnostic™.",
+} as const;
+
 export interface Construct {
   key: ConstructKey;
   name: string;

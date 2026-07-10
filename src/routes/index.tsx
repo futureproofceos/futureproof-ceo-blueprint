@@ -72,19 +72,20 @@ function Landing() {
         <div className="mx-auto max-w-[1200px] px-6 py-24 sm:px-8 sm:py-32">
           <div className="max-w-2xl">
             <p className="text-xs font-semibold uppercase tracking-[0.18em] text-primary">
-              The Four Architectures
+              The Framework
             </p>
             <h2 className="mt-4 text-3xl font-semibold tracking-tight text-foreground sm:text-5xl">
-              The Four Load-Bearing Architectures
+              Three Core Architectures. One Developmental Indicator.
             </h2>
             <p className="mt-5 text-lg text-muted-foreground">
-              The four dimensions that determine how high your ceiling holds.
+              Purpose, Resilience, and Stewardship are the load-bearing architectures of durable leadership. Growth Readiness is the developmental indicator that governs how quickly they can strengthen.
             </p>
           </div>
 
           <div className="mt-14 grid gap-6 sm:grid-cols-2">
             {(Object.values(CONSTRUCTS)).map((c) => {
               const Icon = ICONS[c.key];
+              const isCore = c.key !== "growth";
               return (
                 <Card key={c.key} className="card-hover p-8 shadow-[var(--shadow-card)]">
                   <div className="flex items-start gap-5">
@@ -98,6 +99,9 @@ function Landing() {
                       <Icon className="h-5 w-5" />
                     </div>
                     <div className="min-w-0">
+                      <p className="text-[10px] font-semibold uppercase tracking-[0.16em] text-muted-foreground">
+                        {isCore ? "Core Architecture" : "Developmental Indicator"}
+                      </p>
                       <h3 className="text-lg font-semibold tracking-tight text-foreground">
                         {c.name}
                       </h3>
@@ -109,6 +113,18 @@ function Landing() {
                 </Card>
               );
             })}
+          </div>
+
+          <div className="mt-10 rounded-xl border border-border/70 bg-card/60 p-6 sm:p-8">
+            <p className="text-[10px] font-semibold uppercase tracking-[0.16em]" style={{ color: "var(--accent)" }}>
+              Theoretical Foundation
+            </p>
+            <h3 className="mt-2 text-xl font-semibold tracking-tight text-foreground">
+              Identity Foundation
+            </h3>
+            <p className="mt-3 max-w-3xl text-sm leading-relaxed text-muted-foreground">
+              The three core architectures rest upon a deeper Identity Foundation — the sense of self from which a leader acts. In this research beta, Identity Foundation is treated as the theoretical bedrock of the framework and is not directly measured. Its dedicated instrumentation is on the FutureProofCEOs research roadmap.
+            </p>
           </div>
         </div>
       </section>
