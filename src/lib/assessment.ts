@@ -3,9 +3,9 @@ export type ConstructKey = "purpose" | "resilience" | "stewardship" | "growth";
 export const IDENTITY_FOUNDATION = {
   title: "Identity Foundation",
   short:
-    "The three core architectures rest upon a deeper Identity Foundation — the sense of self from which a leader acts.",
+    "Identity Foundation is the theoretical bedrock of the model — the sense of self from which Purpose, Resilience and Legacy are expressed.",
   interpretation:
-    "Identity Foundation refers to the underlying sense of self from which purpose is expressed, resilience is sustained, and stewardship is exercised. It shapes every architecture measured in this diagnostic, but it is not itself scored in Version 1. This research beta focuses on the three load-bearing architectures because their behavioural signals are stable enough to measure reliably. Identity Foundation operates upstream of behaviour and requires a different instrumentation approach — one the FutureProofCEOs Institute is actively developing. Treat your results as an accurate read on the structures identity produces, and treat Identity itself as the next layer of inquiry rather than a gap in this report.",
+    "Identity Foundation refers to the underlying sense of self from which Purpose is expressed, Resilience is sustained, and Legacy is built. It is the upstream construct that shapes how each of the three core architectures shows up in behaviour, but it is not itself measured in Research Beta Version 1. This beta focuses on the three load-bearing architectures because their behavioural signals are stable enough to measure reliably. Identity Foundation operates one layer above behaviour and requires its own instrumentation, which the FutureProofCEOs Institute is actively developing. Treat your results as an accurate read on the structures identity produces, and treat Identity itself as the next layer of inquiry rather than a gap in this report.",
   roadmap:
     "A dedicated Identity Foundation module is on the FutureProofCEOs research roadmap for a future release of the Inner Architecture Diagnostic™.",
 } as const;
@@ -40,19 +40,19 @@ export const CONSTRUCTS: Record<ConstructKey, Construct> = {
   },
   stewardship: {
     key: "stewardship",
-    name: "Stewardship Architecture",
-    short: "Stewardship",
+    name: "Legacy Architecture",
+    short: "Legacy",
     description:
-      "How you protect people, capital, reputation, and long-horizon assets under your care — the discipline of holding what has been entrusted to you.",
+      "The extent to which you intentionally create enduring value through people, systems, institutions, culture and succession that continue beyond your direct involvement.",
     color: "var(--gold)",
     cssVar: "--gold",
   },
   growth: {
     key: "growth",
-    name: "Growth Readiness",
-    short: "Growth",
+    name: "Growth Readiness Index",
+    short: "Growth Index",
     description:
-      "Openness to feedback, learning velocity, and the structural capacity to expand your leadership as the organization scales.",
+      "A developmental modifier indicating openness to learning, adaptability and coaching readiness. It shapes recommendations but is not a core architecture.",
     color: "var(--accent)",
     cssVar: "--accent",
   },
