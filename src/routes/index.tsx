@@ -119,17 +119,6 @@ function Landing() {
             })}
           </div>
 
-          <div className="mt-10 rounded-xl border border-border/70 bg-card/60 p-6 sm:p-8">
-            <p className="text-[10px] font-semibold uppercase tracking-[0.16em]" style={{ color: "var(--accent)" }}>
-              Theoretical Foundation
-            </p>
-            <h3 className="mt-2 text-xl font-semibold tracking-tight text-foreground">
-              Identity Foundation
-            </h3>
-            <p className="mt-3 max-w-3xl text-sm leading-relaxed text-muted-foreground">
-              Purpose, Resilience and Legacy rest upon a deeper Identity Foundation — the sense of self from which they are expressed. In Research Beta Version 1, Identity Foundation is the theoretical bedrock of the framework and is not directly measured; a dedicated Identity Foundation module is on the FutureProofCEOs research roadmap.
-            </p>
-          </div>
         </div>
       </section>
 
