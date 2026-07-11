@@ -20,7 +20,6 @@ import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
 import {
   CONSTRUCTS,
-  IDENTITY_FOUNDATION,
   QUESTIONS,
   STORAGE_KEY,
   scoreAssessment,
@@ -29,7 +28,7 @@ import {
   type RiskSeverity,
   type ScoreResult,
 } from "@/lib/assessment";
-import { ArrowLeft, Download, RotateCcw, TrendingUp, AlertTriangle, Sparkles, ShieldAlert, FileText, Layers } from "lucide-react";
+import { ArrowLeft, Download, RotateCcw, TrendingUp, AlertTriangle, Sparkles, ShieldAlert, FileText } from "lucide-react";
 
 export const Route = createFileRoute("/results")({
   head: () => ({
@@ -278,6 +277,11 @@ function ResultsPage() {
                     </div>
                   </div>
                   <p className="mt-3 text-sm leading-relaxed text-muted-foreground">{c.description}</p>
+                  {s.key === "purpose" && (
+                    <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
+                      Note: Purpose Architecture measures both identity clarity and directional clarity as one integrated construct. A low score often reflects an identity formation gap as much as a purpose gap — and the two must be addressed together.
+                    </p>
+                  )}
                 </Card>
               );
             })}
