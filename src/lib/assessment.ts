@@ -1,15 +1,5 @@
 export type ConstructKey = "purpose" | "resilience" | "stewardship" | "growth";
 
-export const IDENTITY_FOUNDATION = {
-  title: "Identity Foundation",
-  short:
-    "Identity Foundation is the theoretical bedrock of the model — the sense of self from which Purpose, Resilience and Legacy are expressed.",
-  interpretation:
-    "Identity Foundation refers to the underlying sense of self from which Purpose is expressed, Resilience is sustained, and Legacy is built. It is the upstream construct that shapes how each of the three core architectures shows up in behaviour, but it is not itself measured in Research Beta Version 1. This beta focuses on the three load-bearing architectures because their behavioural signals are stable enough to measure reliably. Identity Foundation operates one layer above behaviour and requires its own instrumentation, which the FutureProofCEOs Institute is actively developing. Treat your results as an accurate read on the structures identity produces, and treat Identity itself as the next layer of inquiry rather than a gap in this report.",
-  roadmap:
-    "A dedicated Identity Foundation module is on the FutureProofCEOs research roadmap for a future release of the Inner Architecture Diagnostic™.",
-} as const;
-
 export interface Construct {
   key: ConstructKey;
   name: string;
@@ -25,7 +15,7 @@ export const CONSTRUCTS: Record<ConstructKey, Construct> = {
     name: "Purpose Architecture",
     short: "Purpose",
     description:
-      "Clarity of mission, alignment of values, and the coherence between what you say matters and how you actually allocate time and capital.",
+      "Purpose Architecture encompasses two inseparable dimensions: identity clarity — knowing who you are, where you come from, and what you are naturally built for — and directional clarity — knowing what you are here to do and why it matters. Most leadership frameworks measure direction without measuring the identity foundation beneath it. This diagnostic measures both as one integrated architecture. A leader cannot have genuine Purpose Architecture without both dimensions being developed.",
     color: "var(--primary)",
     cssVar: "--primary",
   },
