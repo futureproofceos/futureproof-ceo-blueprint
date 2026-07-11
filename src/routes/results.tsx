@@ -78,13 +78,14 @@ function ResultsPage() {
     );
   }
 
-  const radarData = result.scores.map((s) => ({
+  const coreScoresOnly = result.scores.filter((s) => s.key !== "growth");
+  const radarData = coreScoresOnly.map((s) => ({
     subject: s.short,
     score: s.raw,
     fullMark: 100,
   }));
 
-  const barData = result.scores.map((s) => ({
+  const barData = coreScoresOnly.map((s) => ({
     name: s.short,
     value: s.raw,
     fill: CONSTRUCTS[s.key].color,
@@ -248,7 +249,7 @@ function ResultsPage() {
             Construct breakdown
           </h2>
           <div className="mt-3 grid gap-3 sm:grid-cols-2">
-            {result.scores.map((s) => {
+            {coreScoresOnly.map((s) => {
               const c = CONSTRUCTS[s.key];
               return (
                 <Card key={s.key} className="p-5 shadow-[var(--shadow-card)]">
@@ -311,25 +312,30 @@ function ResultsPage() {
           <Card
             className="p-6 shadow-[var(--shadow-card)] sm:p-8"
             style={{
-              background: "color-mix(in oklab, var(--accent) 4%, var(--card))",
-              borderColor: "color-mix(in oklab, var(--accent) 20%, var(--border))",
+              background:
+                "radial-gradient(120% 140% at 0% 0%, color-mix(in oklab, var(--gold) 18%, var(--card)) 0%, var(--card) 65%)",
+              borderColor: "color-mix(in oklab, var(--gold) 35%, var(--border))",
+              boxShadow: "0 12px 40px -18px color-mix(in oklab, var(--gold) 55%, transparent)",
             }}
           >
             <div className="grid grid-cols-[minmax(0,1fr)_auto] items-start gap-4">
               <div className="min-w-0">
-                <p className="text-xs font-semibold uppercase tracking-[0.14em] text-muted-foreground">
-                  Developmental modifier
+                <p className="text-xs font-semibold uppercase tracking-[0.14em]" style={{ color: "var(--gold)" }}>
+                  Development Velocity Index
                 </p>
-                <h2 className="mt-1 text-lg font-semibold tracking-tight text-foreground">
-                  Growth Readiness Index · {result.growthModifier.tier}
+                <h2 className="mt-1 text-2xl font-semibold tracking-tight text-foreground sm:text-3xl">
+                  Your Development Velocity
                 </h2>
+                <p className="mt-1 text-sm text-muted-foreground">
+                  How quickly your architectures can strengthen. Tier: {result.growthModifier.tier}.
+                </p>
                 <p className="mt-2 max-w-2xl text-sm leading-relaxed text-muted-foreground">
                   {result.growthModifier.recommendation}
                 </p>
                 <div className="mt-4 grid grid-cols-2 gap-4 sm:max-w-md">
                   <div>
                     <p className="text-[10px] uppercase tracking-wider text-muted-foreground">Growth Readiness Index</p>
-                    <p className="text-2xl font-semibold tabular-nums" style={{ color: "var(--accent)" }}>
+                    <p className="text-2xl font-semibold tabular-nums" style={{ color: "var(--gold)" }}>
                       {result.growthScore.raw}<span className="text-sm text-muted-foreground"> / 100</span>
                     </p>
                   </div>
