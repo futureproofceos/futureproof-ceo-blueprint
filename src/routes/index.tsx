@@ -86,6 +86,10 @@ function Landing() {
             {(Object.values(CONSTRUCTS)).map((c) => {
               const Icon = ICONS[c.key];
               const isCore = c.key !== "growth";
+              const label = isCore ? "Core Architecture" : "Development Velocity Index";
+              const body = isCore
+                ? c.description
+                : "The Growth Readiness Index measures how effectively and quickly you can develop your three core architectures. Two leaders at the same stage can develop at completely different rates depending on their openness to honest challenge, their learning agility, and their willingness to do the internal work. The Growth Readiness Index is the multiplier applied to your developmental trajectory — it does not measure what you have built, but how fast you can build.";
               return (
                 <Card key={c.key} className="card-hover p-8 shadow-[var(--shadow-card)]">
                   <div className="flex items-start gap-5">
@@ -100,13 +104,13 @@ function Landing() {
                     </div>
                     <div className="min-w-0">
                       <p className="text-[10px] font-semibold uppercase tracking-[0.16em] text-muted-foreground">
-                        {isCore ? "Core Architecture" : "Developmental Indicator"}
+                        {label}
                       </p>
                       <h3 className="text-lg font-semibold tracking-tight text-foreground">
                         {c.name}
                       </h3>
                       <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
-                        {c.description}
+                        {body}
                       </p>
                     </div>
                   </div>
@@ -133,8 +137,8 @@ function Landing() {
       <section>
         <div className="mx-auto max-w-[1200px] px-6 py-24 sm:px-8 sm:py-32">
           <div className="grid gap-12 sm:grid-cols-3">
-            <Stat k="44" label="Validated items" />
-            <Stat k="4" label="Architectures scored 0–100" />
+            <Stat k="44" label="Research items" />
+            <Stat k="3 + 1" label="Core Architectures + Development Velocity Index" />
             <Stat k="12 min" label="Median completion" />
           </div>
 
