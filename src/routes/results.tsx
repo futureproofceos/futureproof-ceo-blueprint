@@ -30,6 +30,25 @@ import {
 } from "@/lib/assessment";
 import { ArrowLeft, Download, RotateCcw, TrendingUp, AlertTriangle, Sparkles, ShieldAlert, FileText } from "lucide-react";
 
+const FEEDBACK_FORM_URL = "https://docs.google.com/forms/d/e/1FAIpQLScFeedbackFormPlaceholder/viewform";
+const PARTICIPANT_ID_KEY = "fp_participant_id";
+const PARTICIPANT_COUNTER_KEY = "fp_participant_counter";
+
+function getOrCreateParticipantId(): string {
+  try {
+    const existing = sessionStorage.getItem(PARTICIPANT_ID_KEY);
+    if (existing) return existing;
+    const prev = parseInt(localStorage.getItem(PARTICIPANT_COUNTER_KEY) || "0", 10) || 0;
+    const next = prev + 1;
+    localStorage.setItem(PARTICIPANT_COUNTER_KEY, String(next));
+    const id = `FP-${String(next).padStart(4, "0")}`;
+    sessionStorage.setItem(PARTICIPANT_ID_KEY, id);
+    return id;
+  } catch {
+    return `FP-${String(Math.floor(Math.random() * 9000) + 1000)}`;
+  }
+}
+
 export const Route = createFileRoute("/results")({
   head: () => ({
     meta: [
@@ -43,6 +62,7 @@ export const Route = createFileRoute("/results")({
 function ResultsPage() {
   const navigate = useNavigate();
   const [answers, setAnswers] = useState<Answers | null>(null);
+  const [participantId, setParticipantId] = useState<string>("");
 
   useEffect(() => {
     try {
@@ -58,6 +78,12 @@ function ResultsPage() {
     () => (answers ? scoreAssessment(answers) : null),
     [answers],
   );
+
+  useEffect(() => {
+    if (result && result.confidence > 0 && !participantId) {
+      setParticipantId(getOrCreateParticipantId());
+    }
+  }, [result, participantId]);
 
   if (!answers) return null;
 
@@ -92,16 +118,17 @@ function ResultsPage() {
 
   function reset() {
     sessionStorage.removeItem(STORAGE_KEY);
+    sessionStorage.removeItem(PARTICIPANT_ID_KEY);
     navigate({ to: "/assessment" });
   }
 
   function download() {
-    const text = buildReport(result!);
+    const text = buildReport(result!, participantId);
     const blob = new Blob([text], { type: "text/plain;charset=utf-8" });
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
     a.href = url;
-    a.download = "inner-architecture-diagnostic.txt";
+    a.download = `inner-architecture-diagnostic-${participantId || "report"}.txt`;
     document.body.appendChild(a);
     a.click();
     a.remove();
@@ -133,8 +160,33 @@ function ResultsPage() {
       </header>
 
       <main className="mx-auto max-w-5xl px-5">
+        {/* Participant ID */}
+        {participantId && (
+          <section className="pt-8">
+            <div
+              className="flex flex-wrap items-center justify-between gap-3 rounded-lg border px-4 py-3"
+              style={{
+                borderColor: "color-mix(in oklab, var(--primary) 25%, var(--border))",
+                background: "color-mix(in oklab, var(--primary) 4%, var(--card))",
+              }}
+            >
+              <div className="min-w-0">
+                <p className="text-[10px] font-semibold uppercase tracking-[0.16em] text-muted-foreground">
+                  Participant ID
+                </p>
+                <p className="mt-0.5 font-mono text-lg font-semibold tracking-wide text-foreground">
+                  {participantId}
+                </p>
+              </div>
+              <p className="max-w-md text-xs leading-relaxed text-muted-foreground">
+                Anonymous research identifier. No personal information is stored.
+              </p>
+            </div>
+          </section>
+        )}
+
         {/* Profile hero */}
-        <section className="pt-10 sm:pt-16">
+        <section className="pt-8 sm:pt-10">
           <Badge variant="outline" className="border-primary/40 text-primary">
             {result.profile.archetype}
           </Badge>
@@ -498,6 +550,35 @@ function ResultsPage() {
             <Download className="mr-1 h-4 w-4" /> Download full report
           </Button>
         </section>
+
+        {/* Feedback */}
+        <section className="mt-10">
+          <Card
+            className="p-6 shadow-[var(--shadow-card)] sm:p-8"
+            style={{
+              background: "color-mix(in oklab, var(--accent) 4%, var(--card))",
+              borderColor: "color-mix(in oklab, var(--accent) 25%, var(--border))",
+            }}
+          >
+            <h3 className="text-sm font-semibold uppercase tracking-[0.14em] text-muted-foreground">
+              Help improve this diagnostic
+            </h3>
+            <p className="mt-3 max-w-2xl text-sm leading-relaxed text-foreground">
+              This is a research beta. Your feedback shapes future iterations of the
+              framework and scoring engine.
+            </p>
+            <p className="mt-2 max-w-2xl text-sm leading-relaxed text-muted-foreground">
+              Please include your Participant ID{participantId ? ` (${participantId})` : ""} when
+              completing the feedback form so your responses can be linked anonymously to
+              your assessment. No login or email required.
+            </p>
+            <div className="mt-5">
+              <a href={FEEDBACK_FORM_URL} target="_blank" rel="noopener noreferrer">
+                <Button>Help Improve This Diagnostic</Button>
+              </a>
+            </div>
+          </Card>
+        </section>
       </main>
     </div>
   );
@@ -626,7 +707,7 @@ function coherenceCopy(v: number) {
   return "Your architecture is significantly uneven. A dominant construct is carrying disproportionate load — impressive in the short run, unsustainable across cycles.";
 }
 
-function buildReport(r: ScoreResult) {
+function buildReport(r: ScoreResult, participantId: string) {
   const line = "=".repeat(64);
   const soft = "-".repeat(64);
   const now = new Date().toLocaleString();
@@ -638,6 +719,7 @@ function buildReport(r: ScoreResult) {
     line,
     "  INNER ARCHITECTURE DIAGNOSTIC™",
     "  FutureProofCEOs · Research Report",
+    `  Participant ID: ${participantId || "—"}`,
     `  Generated: ${now}`,
     line,
     "",
