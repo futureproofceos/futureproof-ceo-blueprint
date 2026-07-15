@@ -551,31 +551,42 @@ function ResultsPage() {
           </Button>
         </section>
 
-        {/* Feedback */}
+        {/* Help shape the future of leadership */}
         <section className="mt-10">
           <Card
             className="p-6 shadow-[var(--shadow-card)] sm:p-8"
             style={{
-              background: "color-mix(in oklab, var(--accent) 4%, var(--card))",
-              borderColor: "color-mix(in oklab, var(--accent) 25%, var(--border))",
+              background: "color-mix(in oklab, var(--primary) 4%, var(--card))",
+              borderColor: "color-mix(in oklab, var(--primary) 20%, var(--border))",
             }}
           >
-            <h3 className="text-sm font-semibold uppercase tracking-[0.14em] text-muted-foreground">
-              Help improve this diagnostic
-            </h3>
-            <p className="mt-3 max-w-2xl text-sm leading-relaxed text-foreground">
-              This is a research beta. Your feedback shapes future iterations of the
-              framework and scoring engine.
+            <div className="flex items-center gap-2">
+              <Sparkles className="h-4 w-4 text-primary" />
+              <h3 className="text-xs font-semibold uppercase tracking-[0.16em] text-primary">
+                Help Shape the Future of Leadership
+              </h3>
+            </div>
+            <p className="mt-4 max-w-2xl text-base leading-relaxed text-foreground">
+              You&apos;ve just completed the Research Beta of the Inner Architecture Diagnostic™.
             </p>
             <p className="mt-2 max-w-2xl text-sm leading-relaxed text-muted-foreground">
-              Please include your Participant ID{participantId ? ` (${participantId})` : ""} when
-              completing the feedback form so your responses can be linked anonymously to
-              your assessment. No login or email required.
+              Your feedback will directly influence the development and validation of the FutureProofCEOs Inner Architecture Framework™.
             </p>
-            <div className="mt-5">
+            <p className="mt-2 max-w-2xl text-sm leading-relaxed text-muted-foreground">
+              This short survey takes less than two minutes and is one of the most valuable ways you can contribute.
+            </p>
+            <div className="mt-6">
               <a href={FEEDBACK_FORM_URL} target="_blank" rel="noopener noreferrer">
                 <Button>Help Improve This Diagnostic</Button>
               </a>
+            </div>
+            <div className="mt-6 border-t border-border/60 pt-4">
+              <p className="text-[10px] font-semibold uppercase tracking-[0.16em] text-muted-foreground">
+                Research Beta v1.0
+              </p>
+              <p className="mt-1 text-xs text-muted-foreground">
+                FutureProofCEOs Leadership Research Initiative
+              </p>
             </div>
           </Card>
         </section>
