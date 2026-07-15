@@ -30,7 +30,7 @@ import {
 } from "@/lib/assessment";
 import { ArrowLeft, Download, RotateCcw, TrendingUp, AlertTriangle, Sparkles, ShieldAlert, FileText } from "lucide-react";
 
-const FEEDBACK_FORM_URL = "https://docs.google.com/forms/d/e/1FAIpQLScFeedbackFormPlaceholder/viewform";
+const FEEDBACK_FORM_URL = "https://forms.gle/NPkP9FeqxJ9ar7c17";
 const PARTICIPANT_ID_KEY = "fp_participant_id";
 const PARTICIPANT_COUNTER_KEY = "fp_participant_counter";
 
